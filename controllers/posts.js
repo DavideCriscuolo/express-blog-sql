@@ -1,14 +1,35 @@
 const posts = require("./../data/posts");
 const connection = require("./../db/connection");
 
+const index = (req, res) => {
+  const sql = "SELECT * FROM `posts`";
+
+  connection.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    console.log(result);
+    res.json(result);
+  });
+};
 const show = (req, res) => {
   const id = Number(req.params.id);
-  const post = posts.find((post) => post.id === id);
-  if (post) {
-    res.json(post);
-  } else {
-    res.status(404).json({ error: "Post non trovato" });
-  }
+
+  const sql = "SELECT * FROM `posts` WHERE id = ?;";
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        err: err.message,
+      });
+    }
+    console.log(results);
+    res.json(results);
+  });
 };
 
 const destroy = (req, res) => {
@@ -69,20 +90,6 @@ const upadteFull = (req, res) => {
   post.tags = req.body.tags;
   res.json(posts);
   console.log(posts);
-};
-const index = (req, res) => {
-  const sql = "SELECT * FROM `posts`";
-
-  connection.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        err: err.message,
-      });
-    }
-    console.log(result);
-    res.json(result);
-  });
 };
 
 module.exports = {
