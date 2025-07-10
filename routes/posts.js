@@ -6,7 +6,7 @@ const postsController = require("./../controllers/posts");
 
 //index
 
-router.get("/", postsController.indexFilter);
+router.get("/", postsController.index);
 
 //show
 

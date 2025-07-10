@@ -1,4 +1,5 @@
 const posts = require("./../data/posts");
+const connection = require("./../db/connection");
 
 const show = (req, res) => {
   const id = Number(req.params.id);
@@ -69,15 +70,19 @@ const upadteFull = (req, res) => {
   res.json(posts);
   console.log(posts);
 };
-const indexFilter = (req, res) => {
-  let filteredPosts = posts;
+const index = (req, res) => {
+  const sql = "SELECT * FROM `posts`";
 
-  if (req.query.tag) {
-    filteredPosts = posts.filter(
-      (post) => post.tags && post.tags.includes(req.query.tag)
-    );
-  }
-  res.json(filteredPosts);
+  connection.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    console.log(result);
+    res.json(result);
+  });
 };
 
 module.exports = {
@@ -85,5 +90,5 @@ module.exports = {
   destroy,
   store,
   update,
-  indexFilter,
+  index,
 };
