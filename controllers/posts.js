@@ -27,26 +27,35 @@ const show = (req, res) => {
         err: err.message,
       });
     }
+    if (!results.length > 0) {
+      return res.status(404).json({
+        err: "post non trovato",
+      });
+    }
     console.log(results);
-    res.json(results);
+    return res.json(results[0]);
   });
 };
 
 const destroy = (req, res) => {
   const id = Number(req.params.id);
-  const index = posts.findIndex((post) => {
-    if (post.id === id) {
-      return true;
-    }
-  });
 
-  if (index !== -1) {
-    posts.splice(index, 1);
-    res.sendStatus(204);
-  } else {
-    res.status(404).json({ error: "Post non trovato" });
-  }
-  console.log(posts);
+  const sql = "DELETE FROM `posts` WHERE id = ?;";
+  connection.query(sql, [id], (err, results) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({
+        err: "post non trovato",
+      });
+    }
+    console.log("il post è stato eliminato correttamente");
+    return res.status(204).json(results);
+  });
 };
 
 const store = (req, res) => {
