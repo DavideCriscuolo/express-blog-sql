@@ -59,36 +59,43 @@ const destroy = (req, res) => {
 };
 
 const store = (req, res) => {
-const {title,content,image}=req.body;
-const sql="INSERT INTO `posts` (`title`, `content`, `image`) VALUES (?,?,?)";
+  const { title, content, image } = req.body;
+  const sql =
+    "INSERT INTO `posts` (`title`, `content`, `image`) VALUES (?,?,?)";
 
-connection.query(sql, [title,content,image], (err, results)=>{
-      if (err) {
+  connection.query(sql, [title, content, image], (err, results) => {
+    if (err) {
       console.log(err);
       return res.status(500).json({
         err: err.message,
       });
     }
-   console.log(results);
+    console.log(results);
     return res.status(201).json(results);
-});
-
-
-
+  });
 };
 
 const update = (req, res) => {
   const id = Number(req.params.id);
-  const post = posts.find((post) => post.id === id);
-  if (!post) {
-    return res.status(404).json({
-      error: "Post non trovato",
-    });
-  }
-  post.title = req.body.title;
-  post.content = req.body.content;
-  res.json(posts);
-  console.log(posts);
+  const { title, content, image } = req.body;
+  const sql =
+    "UPDATE `posts` SET `title` = ? , `content` = ? , `image` = ?  WHERE `id` = ? ;";
+
+  connection.query(sql, [title, content, image, id], (err, results) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({
+        err: "risorsa non trovata",
+      });
+    }
+    console.log(results);
+    return res.status(201).json(results);
+  });
 };
 const upadteFull = (req, res) => {
   const id = Number(req.params.id);
