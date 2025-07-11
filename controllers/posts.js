@@ -88,7 +88,7 @@ const update = (req, res) => {
         err: err.message,
       });
     }
-    if (results.affectedRows === 0) {
+    if (results.affectedRows <= 0) {
       return res.status(404).json({
         err: "risorsa non trovata",
       });
