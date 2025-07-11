@@ -59,17 +59,22 @@ const destroy = (req, res) => {
 };
 
 const store = (req, res) => {
-  console.log(req.body);
-  const newPost = {
-    title: req.body.title,
-    content: req.body.content,
-    image: req.body.image,
-    tags: req.body.tags,
-  };
+const {title,content,image}=req.body;
+const sql="INSERT INTO `posts` (`title`, `content`, `image`) VALUES (?,?,?)";
 
-  posts.push(newPost);
-  res.status(201).json(newPost);
-  console.log(posts);
+connection.query(sql, [title,content,image], (err, results)=>{
+      if (err) {
+      console.log(err);
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+   console.log(results);
+    return res.status(201).json(results);
+});
+
+
+
 };
 
 const update = (req, res) => {
